@@ -1,4 +1,6 @@
 ﻿using CoffeeMachine.API.Interfaces;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CoffeeMachine.API.Controllers
@@ -8,16 +10,15 @@ namespace CoffeeMachine.API.Controllers
     public class BrewCoffeeController : ControllerBase
     {
         private readonly ICofffeService _coffeeService;
-        private readonly IWeatherService _weatherService;
 
-        public BrewCoffeeController(ICofffeService coffeeService, IWeatherService weatherService)
+        public BrewCoffeeController(ICofffeService coffeeService)
         {
             _coffeeService= coffeeService;
-            _weatherService = weatherService;
         }
 
 
         [HttpGet]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public IActionResult BrewCoffee()
         {
             _coffeeService.UpdateCoffeeCount();
@@ -31,24 +32,9 @@ namespace CoffeeMachine.API.Controllers
             {
                 return StatusCode(StatusCodes.Status503ServiceUnavailable);
             }
-
-            BrewCoffeeResponse brewCoffeeResponse = new BrewCoffeeResponse();
-            brewCoffeeResponse.prepared = _coffeeService.PreparedTime.ToString("yyyy-MM-ddTHH:mm:sszz00");
-
-            double currentTemp = _weatherService.GetCurrentTemperature().Result;
-
-            if (currentTemp > 30)
-            {
-                brewCoffeeResponse.message = "Your refreshing iced coffee is ready";                    
-            }
-
-            return Ok(brewCoffeeResponse);
-        }
-
-        private class BrewCoffeeResponse
-        {
-            public string message { get; set; } = "Your piping hot coffee is ready";
-            public string prepared { get; set; }
-        }
+            
+            return Ok(_coffeeService.GetCoffee());
+            
+        }        
     }
 }

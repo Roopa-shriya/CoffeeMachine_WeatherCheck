@@ -1,4 +1,6 @@
-﻿namespace CoffeeMachine.API.Interfaces
+﻿using CoffeeMachine.API.Models;
+
+namespace CoffeeMachine.API.Interfaces
 {
     public interface ICofffeService
     {
@@ -6,5 +8,6 @@
         DateTime PreparedTime { get; set; }
 
         void UpdateCoffeeCount();
+        BrewCoffeeResponse GetCoffee();
     }
 }

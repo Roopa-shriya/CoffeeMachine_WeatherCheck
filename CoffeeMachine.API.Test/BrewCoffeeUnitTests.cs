@@ -121,7 +121,7 @@ namespace CoffeeMachine.API.Test
             // Assert
             result.Should().NotBeNull();
             result.StatusCode.Should().Be(StatusCodes.Status418ImATeapot);
-        }
+        }       
     }
 }
 
